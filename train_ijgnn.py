@@ -33,7 +33,7 @@ def main(args):
 
     for i in range(args.iters):
         if i % args.generate_g_every == 0:
-            train_g = generate_graphs_seq(args.bs, ns_range, args.data_order, op)
+            train_g = generate_graphs_seq(args.batch_size, ns_range, args.data_order, op)
             train_g = dgl.batch(train_g)
 
         start = perf_counter()
@@ -59,6 +59,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-iters', type=int, default=5000, help='number of gradient updates')
     parser.add_argument('-generate_g_every', type=int, default=32, help='sample regeneration interval')
+    parser.add_argument('-batch_size', type=int, default=32, help='batch size')
     parser.add_argument('-data_order', type=int, default=5, help='data generation parameter')
     parser.add_argument('-internal_hops', type=int, default=5, help='IJGNN internal hops')
     args = parser.parse_args()
