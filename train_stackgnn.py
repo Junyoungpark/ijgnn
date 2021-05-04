@@ -7,7 +7,7 @@ import wandb
 from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
 
 from src.data.chain_data import generate_graphs_seq
-from src.net.IJGNN import IJGNN
+from src.net.StackGNN import StackGNN
 from src.utils import calc_mape
 
 
@@ -15,12 +15,13 @@ def main(args):
     ns_range = [20, 50]
     op = 'max'
 
-    model = IJGNN(nf_dim=1,
-                  ef_dim=1,
-                  hnf_dim=32,
-                  hef_dim=32,
-                  nf_outdim=1,
-                  ef_outdim=1)
+    model = StackGNN(nf_dim=1,
+                     ef_dim=1,
+                     hnf_dim=32,
+                     hef_dim=32,
+                     nf_outdim=1,
+                     ef_outdim=1,
+                     n_layers=args.n_layers)
 
     opt = torch.optim.Adam(model.parameters(), lr=1e-3)
     scheduler = CosineAnnealingWarmRestarts(opt, T_0=32)
@@ -30,7 +31,7 @@ def main(args):
               'internal_hops': args.internal_hops}
 
     wandb.init(project='IJGNN',
-               group='IJGNN',
+               group='StackGNN',
                config=config)
 
     for i in range(args.iters):
@@ -41,7 +42,7 @@ def main(args):
         start = perf_counter()
         train_nf, train_ef = train_g.ndata['x'], train_g.edata['x']
         train_y = train_g.ndata['y']
-        train_pred, _ = model(train_g, train_nf, train_ef, args.internal_hops)
+        train_pred, _ = model(train_g, train_nf, train_ef)
         loss = loss_fn(train_pred, train_y)
 
         opt.zero_grad()
@@ -64,6 +65,6 @@ if __name__ == '__main__':
     parser.add_argument('-generate_g_every', type=int, default=32, help='sample regeneration interval')
     parser.add_argument('-batch_size', type=int, default=32, help='batch size')
     parser.add_argument('-data_order', type=int, default=5, help='data generation parameter')
-    parser.add_argument('-internal_hops', type=int, default=5, help='IJGNN internal hops')
+    parser.add_argument('-n_layers', type=int, default=1, help='Number of StackGNN layers')
     args = parser.parse_args()
     main(args)

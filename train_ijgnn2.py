@@ -4,6 +4,7 @@ from time import perf_counter
 import dgl
 import torch
 import wandb
+from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
 
 from src.data.chain_data import generate_graphs_seq
 from src.net.IJGNN import IJGNN2
@@ -16,12 +17,13 @@ def main(args):
 
     model = IJGNN2(nf_dim=1,
                    ef_dim=1,
-                   hnf_dim=16,
-                   hef_dim=16,
+                   hnf_dim=32,
+                   hef_dim=32,
                    nf_outdim=1,
                    ef_outdim=1)
 
     opt = torch.optim.Adam(model.parameters(), lr=1e-3)
+    scheduler = CosineAnnealingWarmRestarts(opt, T_0=32)
     loss_fn = torch.nn.MSELoss()
 
     config = {'data_order': args.data_order,
@@ -45,6 +47,7 @@ def main(args):
         opt.zero_grad()
         loss.backward()
         opt.step()
+        scheduler.step()
         fit_time = perf_counter() - start
 
         # logging
