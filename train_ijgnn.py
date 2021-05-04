@@ -61,3 +61,5 @@ if __name__ == '__main__':
     parser.add_argument('-generate_g_every', type=int, default=32, help='sample regeneration interval')
     parser.add_argument('-data_order', type=int, default=5, help='data generation parameter')
     parser.add_argument('-internal_hops', type=int, default=5, help='IJGNN internal hops')
+    args = parser.parse_args()
+    main(args)
