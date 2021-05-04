@@ -29,4 +29,15 @@ class StackGNN(nn.Module):
         self.edge_nn = MLP(hef_dim, ef_outdim,
                            num_neurons=[])
 
-    def forward
+    def forward(self, g, nf, ef):
+        """
+        :param g: dgl.graph maybe batched
+        :param nf: node feature; expected size [#. total nodes x 'raw' node feat dim]
+        :param ef: edge feature; expected size [#. total edges x 'raw' edge feat dim]
+        :return: unf, uef: updated node features, updated edge features
+        """
+
+        unf, uef = self.gnn(g, nf, ef)
+        unf = self.node_nn(unf)
+        uef = self.edge_nn(uef)
+        return unf, uef
