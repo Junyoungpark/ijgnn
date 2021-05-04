@@ -27,8 +27,7 @@ def main(args):
     scheduler = CosineAnnealingWarmRestarts(opt, T_0=32)
     loss_fn = torch.nn.MSELoss()
 
-    config = {'data_order': args.data_order,
-              'internal_hops': args.internal_hops}
+    config = {'data_order': args.data_order}
 
     wandb.init(project='IJGNN',
                group='StackGNN',
