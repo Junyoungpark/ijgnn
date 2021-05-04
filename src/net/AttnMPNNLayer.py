@@ -21,6 +21,13 @@ def get_aggregator(mode, from_field='m', to_field='agg_m'):
     return aggr
 
 
+ATTN_MPNN_MLP_PARAM = {
+    'num_neurons': [64, 64],
+    'hidden_act': 'ReLU',
+    'out_act': 'Identity',
+}
+
+
 class AttnMPNNLayer(nn.Module):
     def __init__(self,
                  node_in_dim: int,
@@ -28,7 +35,7 @@ class AttnMPNNLayer(nn.Module):
                  node_out_dim: int,
                  edge_out_dim: int,
                  node_aggregator: str = 'mean',
-                 mlp_params: dict = {}):
+                 mlp_params: dict = ATTN_MPNN_MLP_PARAM):
         super(AttnMPNNLayer, self).__init__()
         self.edge_model = MLP(edge_in_dim + 2 * node_in_dim, edge_out_dim, **mlp_params)
         self.attn_model = MLP(edge_in_dim + 2 * node_in_dim, 1, **mlp_params)
