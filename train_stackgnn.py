@@ -21,7 +21,7 @@ def main(args):
                      hef_dim=32,
                      nf_outdim=1,
                      ef_outdim=1,
-                     n_layers=args.n_layers)
+                     n_layers=args.n_layers).to(args.device)
 
     opt = torch.optim.Adam(model.parameters(), lr=1e-3)
     scheduler = CosineAnnealingWarmRestarts(opt, T_0=32)
@@ -37,7 +37,7 @@ def main(args):
     for i in range(args.iters):
         if i % args.generate_g_every == 0:
             train_g = generate_graphs_seq(args.batch_size, ns_range, args.data_order, op)
-            train_g = dgl.batch(train_g)
+            train_g = dgl.batch(train_g).to(args.device)
 
         start = perf_counter()
         train_nf, train_ef = train_g.ndata['x'], train_g.edata['x']
@@ -66,5 +66,6 @@ if __name__ == '__main__':
     parser.add_argument('-batch_size', type=int, default=32, help='batch size')
     parser.add_argument('-data_order', type=int, default=5, help='data generation parameter')
     parser.add_argument('-n_layers', type=int, default=1, help='Number of StackGNN layers')
+    parser.add_argument('-device', type=str, default='cuda:0', help='device for computing tensors')
     args = parser.parse_args()
     main(args)
