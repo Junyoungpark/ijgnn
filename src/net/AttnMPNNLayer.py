@@ -28,7 +28,7 @@ class AttnMPNNLayer(nn.Module):
                  node_out_dim: int,
                  edge_out_dim: int,
                  node_aggregator: str = 'mean',
-                 mlp_params: dict = {'num_neurons': []}):
+                 mlp_params: dict = {}):
         super(AttnMPNNLayer, self).__init__()
         self.edge_model = MLP(edge_in_dim + 2 * node_in_dim, edge_out_dim, **mlp_params)
         self.attn_model = MLP(edge_in_dim + 2 * node_in_dim, 1, **mlp_params)
