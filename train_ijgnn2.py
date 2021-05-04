@@ -60,7 +60,7 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-iters', type=int, default=5000, help='number of gradient updates')
+    parser.add_argument('-iters', type=int, default=3000, help='number of gradient updates')
     parser.add_argument('-generate_g_every', type=int, default=32, help='sample regeneration interval')
     parser.add_argument('-batch_size', type=int, default=32, help='batch size')
     parser.add_argument('-data_order', type=int, default=5, help='data generation parameter')
