@@ -15,7 +15,7 @@ class StackGNN(nn.Module):
                  ef_outdim: int,
                  n_layers: int):
         super(StackGNN, self).__init__()
-        assert n_layers > 1
+        assert n_layers >= 1
         self.gnn = AttnMPNN(node_in_dim=nf_dim,
                             edge_in_dim=ef_dim,
                             node_hidden_dim=hnf_dim,
