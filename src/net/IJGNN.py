@@ -73,14 +73,14 @@ class IJGNN2(nn.Module):
         super(IJGNN2, self).__init__()
 
         # gnn layer
-        self.gnn = AttnMPNNLayer(node_in_dim=hnf_dim,
-                                 edge_in_dim=hef_dim,
+        self.gnn = AttnMPNNLayer(node_in_dim=nf_dim,
+                                 edge_in_dim=ef_dim,
                                  node_out_dim=hnf_dim,
                                  edge_out_dim=hef_dim)
 
         # RNNs - for smartly fusing the injected inputs and hidden embeddings
-        self.node_rnn = nn.GRUCell(nf_dim, hnf_dim)
-        self.edge_rnn = nn.GRUCell(ef_dim, hef_dim)
+        self.node_rnn = nn.GRUCell(hnf_dim, hnf_dim)
+        self.edge_rnn = nn.GRUCell(hef_dim, hef_dim)
 
         # decoders : transform hidden node/edge embeddings to the target
         self.node_nn = MLP(hnf_dim, nf_outdim,
