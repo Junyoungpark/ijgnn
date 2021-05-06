@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 
 from src.net.AttnMPNNLayer import AttnMPNNLayer
+from src.net.GRUMPNN import GRUMPNN
 from src.net.MLP import MLP
 
 
@@ -114,4 +115,44 @@ class IJGNN2(nn.Module):
 
         unf = self.node_nn(hnf)
         uef = self.edge_nn(hef)
+        return unf, uef
+
+
+class IJGNN3(nn.Module):
+    """
+   Maybe utilizing RNN like structure can be better?
+   """
+
+    def __init__(self,
+                 nf_dim: int,
+                 ef_dim: int,
+                 hnf_dim: int,
+                 hef_dim: int,
+                 nf_outdim: int,
+                 ef_outdim: int,
+                 n_iters: int):
+        super(IJGNN3, self).__init__()
+
+        # encoders
+        self.node_encoder = nn.Linear(nf_dim, hnf_dim)
+        self.edge_encoder = nn.Linear(ef_dim, hef_dim)
+
+        # gnn layer
+        self.gn = GRUMPNN(hnf_dim, hef_dim, n_iters)
+
+        # decoders
+        self.node_decoder = MLP(hnf_dim, nf_outdim, num_neurons=[])
+        self.edge_decoder = MLP(hef_dim, ef_outdim, num_neurons=[])
+
+    def forward(self, g, nf, ef):
+        """
+        :param g: dgl.graph maybe batched
+        :param nf: node feature; expected size [#. total nodes x 'raw' node feat dim]
+        :param ef: edge feature; expected size [#. total edges x 'raw' edge feat dim]
+        :return: unf, uef: updated node features, updated edge features
+        """
+
+        unf, uef = self.node_encoder(nf), self.edge_encoder(ef)
+        unf, uef = self.gn(g, unf, uef)
+        unf, uef = self.node_nn(unf), self.edge_nn(uef)
         return unf, uef
