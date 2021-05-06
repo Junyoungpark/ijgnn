@@ -17,8 +17,8 @@ def main(args):
 
     model = IJGNN3(nf_dim=1,
                    ef_dim=1,
-                   hnf_dim=32,
-                   hef_dim=32,
+                   hnf_dim=64,
+                   hef_dim=64,
                    nf_outdim=1,
                    ef_outdim=1,
                    n_iters=args.internal_hops).to(args.device)
@@ -61,11 +61,11 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-iters', type=int, default=3000, help='number of gradient updates')
+    parser.add_argument('-iters', type=int, default=5000, help='number of gradient updates')
     parser.add_argument('-generate_g_every', type=int, default=32, help='sample regeneration interval')
     parser.add_argument('-batch_size', type=int, default=32, help='batch size')
     parser.add_argument('-data_order', type=int, default=5, help='data generation parameter')
-    parser.add_argument('-internal_hops', type=int, default=5, help='IJGNN internal hops')
+    parser.add_argument('-internal_hops', type=int, default=6, help='IJGNN internal hops')
     parser.add_argument('-device', type=str, default='cuda:0', help='device for computing tensors')
     args = parser.parse_args()
     main(args)

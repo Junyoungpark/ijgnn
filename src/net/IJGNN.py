@@ -154,5 +154,5 @@ class IJGNN3(nn.Module):
 
         unf, uef = self.node_encoder(nf), self.edge_encoder(ef)
         unf, uef = self.gn(g, unf, uef)
-        unf, uef = self.node_nn(unf), self.edge_nn(uef)
+        unf, uef = self.node_decoder(unf), self.edge_decoder(uef)
         return unf, uef
